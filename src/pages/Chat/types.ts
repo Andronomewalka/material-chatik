@@ -1,5 +1,7 @@
-export interface ChatProp {
+import { MessageProp } from "components/Message";
 
+export interface ChatHistoryProp {
+    messages: MessageProp[]
 }
 
 export interface ChatInputProp {

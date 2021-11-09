@@ -3,6 +3,7 @@ export enum MessageType {
 }
 
 export interface MessageProp {
+    id: number | string,
     text: string,
     user: string,
     type: MessageType

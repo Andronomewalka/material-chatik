@@ -1,4 +1,3 @@
-import React from "react";
 import { SyntheticEvent, useState } from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import {
@@ -13,7 +12,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { styled, alpha } from "@mui/material/styles";
-import { AccountCircle, SendOutlined, Search } from "@mui/icons-material";
+import { AccountCircle, Search, Menu as MenuIcon } from "@mui/icons-material";
 
 const Header = () => {
   const theme = useTheme();
@@ -32,11 +31,15 @@ const Header = () => {
     <AppBar position="static">
       <Toolbar>
         <LogoContainer>
-          {isUpXsmScreen ? (
-            <LogoText variant="h6">Chatik</LogoText>
-          ) : (
-            <SendOutlined />
-          )}
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+          >
+            <MenuIcon />
+          </IconButton>
+          {isUpXsmScreen && <LogoText variant="h6">Chatik</LogoText>}
         </LogoContainer>
 
         <SearchContainer>

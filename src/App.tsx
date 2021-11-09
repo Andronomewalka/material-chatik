@@ -1,9 +1,9 @@
-import { BrowserRouter, Route } from "react-router-dom";
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import Header from "./components/Header";
 import theme from "./utils/theme";
 import Chat from "./pages/Chat";
-import { Routes } from "react-router-dom";
 import GlobalStyles from "@mui/material/GlobalStyles";
 import { Box, Stack } from "@mui/material";
 
@@ -26,7 +26,7 @@ function App() {
             alignItems="stretch"
           >
             <Header />
-            <Box component="main" sx={{ flexGrow: 1 }}>
+            <Box component="main" sx={{ flexGrow: 1, height: "1px" }}>
               <Routes>
                 <Route path="/" element={<Chat />}></Route>
                 <Route path="/chat" element={<Chat />}></Route>
