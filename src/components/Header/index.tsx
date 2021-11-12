@@ -13,11 +13,15 @@ import {
 } from "@mui/material";
 import { styled, alpha } from "@mui/material/styles";
 import { AccountCircle, Search, Menu as MenuIcon } from "@mui/icons-material";
+import { useAppDispatch } from "hooks/useAppDispatch";
+import { signIn, signOut } from "state/auth";
+import apiClient from "utils/apiClient";
 
 const Header = () => {
   const theme = useTheme();
   const isUpXsmScreen = useMediaQuery(theme.breakpoints.up("xsm"));
   const [accountAnchor, setAccountAnchor] = useState<Element | null>(null);
+  const dispatch = useAppDispatch();
 
   const openAccountPopup = (event: SyntheticEvent) => {
     setAccountAnchor(event.currentTarget);
@@ -25,6 +29,11 @@ const Header = () => {
 
   const closeAccountPopup = () => {
     setAccountAnchor(null);
+  };
+
+  const onLogoutClicked = () => {
+    setAccountAnchor(null);
+    dispatch(signOut());
   };
 
   return (
@@ -77,7 +86,7 @@ const Header = () => {
           onClose={closeAccountPopup}
         >
           <MenuItem onClick={closeAccountPopup}>Profile</MenuItem>
-          <MenuItem onClick={closeAccountPopup}>Logout</MenuItem>
+          <MenuItem onClick={onLogoutClicked}>Logout</MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>

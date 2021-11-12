@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Box } from "@mui/material";
 import { MessageProp, MessageType } from "components/Message";
 import { nanoid } from "nanoid";
 import ChatInput from "./ChatInput";
 import ChatHistory from "./ChatHistory";
+import BoxContainer from "components/Common/BoxContainer";
 
 function getFakeMessages(): Array<MessageProp> {
   const res: Array<MessageProp> = [];
@@ -40,10 +40,10 @@ const Chat: React.FC = () => {
   }, []);
 
   return (
-    <Box display="flex" flexDirection="column" height="100%">
+    <BoxContainer>
       <ChatHistory messages={messages} />
       <ChatInput onSubmit={onNewSendMessage} />
-    </Box>
+    </BoxContainer>
   );
 };
 

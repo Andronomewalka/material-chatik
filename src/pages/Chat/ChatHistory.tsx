@@ -32,7 +32,6 @@ const ChatHistory: React.FC<ChatHistoryProp> = ({ messages }) => {
   }, [messages]);
 
   const onReszieDebounced = useDebouncedCallback((e) => {
-    console.log(e);
     chatListCache.current.clearAll();
     updateState();
   }, 50);
