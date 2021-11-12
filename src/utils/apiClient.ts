@@ -1,7 +1,6 @@
 
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { SignInResponseDTO } from "state/auth";
-import { ResponseBaseDTO } from "state/shared/responseBaseDTO";
 const axios = require('axios');
 
 const apiClient = (() => {

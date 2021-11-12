@@ -1,5 +1,4 @@
 import { SyntheticEvent, useState } from "react";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import {
   AppBar,
   IconButton,
@@ -14,8 +13,7 @@ import {
 import { styled, alpha } from "@mui/material/styles";
 import { AccountCircle, Search, Menu as MenuIcon } from "@mui/icons-material";
 import { useAppDispatch } from "hooks/useAppDispatch";
-import { signIn, signOut } from "state/auth";
-import apiClient from "utils/apiClient";
+import { signOut } from "state/auth";
 
 const Header = () => {
   const theme = useTheme();

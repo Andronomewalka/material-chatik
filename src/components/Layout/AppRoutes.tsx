@@ -27,7 +27,12 @@ const AppRoutes: React.FC = () => {
         />
         <Route path="auth/" element={<Auth />}>
           <Route index element={<Navigate to="sign-in" />} />
-          <Route path="sign-in" element={<SignIn />} />
+          <Route
+            path="sign-in"
+            element={
+              !isSignedIn ? <SignIn /> : <Navigate to="/" replace={true} />
+            }
+          />
           <Route path="sign-up" element={<SignUp />} />
         </Route>
         <Route path="*" element={<span>404 not found</span>} />

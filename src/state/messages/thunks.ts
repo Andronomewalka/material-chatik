@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { Message, ThunkMessagesResult } from "./types";
+import { ThunkMessagesResult } from "./types";
 import { Channel } from "state/channels";
 
 export const getMessages = createAsyncThunk<ThunkMessagesResult, Channel>

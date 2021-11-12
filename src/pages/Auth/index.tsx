@@ -1,4 +1,4 @@
-import { Box, Container, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import BoxContainer from "components/Common/BoxContainer";
 import React from "react";
 import { Outlet } from "react-router-dom";
