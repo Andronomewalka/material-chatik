@@ -1,11 +1,11 @@
+import { BaseState } from "state/shared/baseState";
 import { RequestStatus } from "state/shared/requestStatus"
 import { ResponseBaseDTO } from "state/shared/responseBaseDTO";
 
-export interface AuthState {
+export interface AuthState extends BaseState {
     email: string,
     isSignedIn: boolean,
-    status: RequestStatus,
-    error: string,
+    layoutStatus: RequestStatus,
 }
 
 export interface AuthRequest {

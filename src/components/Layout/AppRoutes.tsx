@@ -22,17 +22,17 @@ const AppRoutes: React.FC = () => {
         <Route
           path="chat"
           element={
-            isSignedIn ? <Chat /> : <Navigate to="auth" replace={true} />
+            isSignedIn ? <Chat /> : <Navigate to="/auth" replace={true} />
           }
         />
-        <Route path="auth/" element={<Auth />}>
+        <Route
+          path="auth/"
+          element={
+            !isSignedIn ? <Auth /> : <Navigate to="/chat" replace={true} />
+          }
+        >
           <Route index element={<Navigate to="sign-in" />} />
-          <Route
-            path="sign-in"
-            element={
-              !isSignedIn ? <SignIn /> : <Navigate to="/" replace={true} />
-            }
-          />
+          <Route path="sign-in" element={<SignIn />} />
           <Route path="sign-up" element={<SignUp />} />
         </Route>
         <Route path="*" element={<span>404 not found</span>} />

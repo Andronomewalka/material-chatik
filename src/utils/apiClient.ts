@@ -18,7 +18,7 @@ export const attachTokenToRequest = (token: string | null = null) => {
     apiClient.defaults.headers['Authorization'] = token;
 }
 
-const refreshToken = async () => {
+apiClient.refreshToken = async () => {
     try {
         const response: AxiosResponse<SignInResponseDTO> = 
             await apiClient.post("/auth/refresh-token", {}, {
@@ -27,7 +27,7 @@ const refreshToken = async () => {
 
         const token = response.data.accessToken;
         attachTokenToRequest(`Bearer ${token}`);
-        return true;
+        return response;
     }
     catch (err: any) {
         return false;
@@ -41,8 +41,9 @@ apiClient.withRefresh = async (request: Function) => {
     }
     catch (err: any) {
         if (err?.response?.status === 401) {
-            await refreshToken();
-            return await request();
+            if (await apiClient.refreshToken()) {
+                return await request();
+            }
         }
     }
 }

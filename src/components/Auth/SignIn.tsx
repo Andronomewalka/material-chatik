@@ -3,94 +3,144 @@ import {
   Button,
   IconButton,
   InputAdornment,
+  LinearProgress,
   TextField,
+  Typography,
 } from "@mui/material";
-import React, { SyntheticEvent, useState } from "react";
-import BoxContainer from "components/Common/BoxContainer";
+import React, { useRef, useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Formik, Field, Form, FormikHelpers } from "formik";
 import { useAppDispatch } from "hooks/useAppDispatch";
-import { signIn } from "state/auth";
+import {
+  changeError,
+  selectError,
+  selectFetchStatus,
+  signIn,
+} from "state/auth";
+import { RequestStatus } from "state/shared/requestStatus";
+import { useAppSelector } from "hooks/useAppSelector";
+import { SignInFormValues } from "./types";
+import { useInputsNavigation } from "hooks/useInputsNavigation";
+import { Link } from "react-router-dom";
 
 const SignIn: React.FC = () => {
   const dispatch = useAppDispatch();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isFormValid, setIsFormValid] = useState(true);
+  const wrapperRef = useRef(null);
+  const status = useAppSelector(selectFetchStatus);
+  const error = useAppSelector(selectError);
   const [isPasswordRevealed, setIsPasswordRevealed] = useState(false);
+  useInputsNavigation(wrapperRef);
+
+  const onSubmit = (
+    data: SignInFormValues,
+    { setSubmitting }: FormikHelpers<SignInFormValues>
+  ) => {
+    setSubmitting(true);
+    dispatch(signIn(data)).then(() => setSubmitting(false));
+  };
 
   const onShowPasswordClick = () => {
     setIsPasswordRevealed(!isPasswordRevealed);
   };
 
-  const onSubmit = (e: SyntheticEvent) => {
-    e.preventDefault();
-    dispatch(
-      signIn({
-        email,
-        password,
-      })
-    );
+  const onFormChanged = (e: any) => {
+    if (error) {
+      dispatch(changeError(""));
+    }
   };
 
   return (
-    <BoxContainer
-      sx={{
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "strech",
-          gap: "30px",
-          width: "450px",
-          padding: "40px 60px",
-          marginBottom: "50px",
+    <Box>
+      <Formik
+        initialValues={{
+          email: "",
+          password: "",
         }}
-        component="form"
         onSubmit={onSubmit}
       >
-        <TextField
-          label="Email"
-          variant="outlined"
-          required
-          InputLabelProps={{ required: false }}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <TextField
-          label="Password"
-          variant="outlined"
-          type={isPasswordRevealed ? "text" : "password"}
-          required
-          InputLabelProps={{ required: false }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={onShowPasswordClick}
-                >
-                  {isPasswordRevealed ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          type="submit"
-          disabled={!isFormValid}
-        >
-          Submit
-        </Button>
+        {({ isSubmitting }) => (
+          <Form onChange={onFormChanged}>
+            <Box
+              ref={wrapperRef}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "strech",
+                gap: "30px",
+                width: "450px",
+                padding: "40px 60px",
+                margin: "0 auto 50px",
+              }}
+            >
+              <Field
+                name="email"
+                type="input"
+                required
+                InputLabelProps={{ required: false }}
+                disabled={isSubmitting}
+                as={TextField}
+                label="Email"
+                variant="outlined"
+              />
+              <Field
+                name="password"
+                type={isPasswordRevealed ? "input" : "password"}
+                required
+                InputLabelProps={{ required: false }}
+                disabled={isSubmitting}
+                as={TextField}
+                label="Password"
+                variant="outlined"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={onShowPasswordClick}
+                      >
+                        {isPasswordRevealed ? (
+                          <VisibilityOff />
+                        ) : (
+                          <Visibility />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+                disabled={isSubmitting}
+              >
+                Submit
+              </Button>
+              <Box height="54px">
+                {isSubmitting && <LinearProgress />}
+                {status !== RequestStatus.Requesting && error && (
+                  <Typography
+                    variant="body1"
+                    component="p"
+                    color="error"
+                    textAlign="center"
+                  >
+                    {error}
+                  </Typography>
+                )}
+              </Box>
+            </Box>
+          </Form>
+        )}
+      </Formik>
+      <Box
+        sx={{
+          textAlign: "center",
+        }}
+      >
+        <Link to="/auth/sign-up">Sign Up</Link>
       </Box>
-    </BoxContainer>
+    </Box>
   );
 };
 
