@@ -12,7 +12,7 @@ const Message: React.FC<MessageProp> = ({ text, user, type }) => {
         maxWidth: "60%",
         padding: 1,
         margin: `${
-          type === MessageType.Send ? "5px 15px 5px auto" : "5px auto 5px 15px"
+          type === MessageType.Send ? "5px 15px 5px auto" : "5px auto 5px 7px"
         }`,
       }}
       elevation={3}

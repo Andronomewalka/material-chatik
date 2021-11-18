@@ -30,7 +30,12 @@ apiClient.refreshToken = async () => {
         return response;
     }
     catch (err: any) {
-        return false;
+        return { 
+            data: {
+                code: 9001,
+                error: "Bad Response"
+            } 
+        };
     }
 }
 

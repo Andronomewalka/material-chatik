@@ -6,10 +6,10 @@ export interface Channel extends User, IdProp {
     members: User[],
 }
 
-export interface ChannelState extends BaseState {
-    channels: Channel[]
+export interface ChannelState {
+    isChannelsOpen: boolean
 }
 
 export interface ThunkChannelsResult {
-    channels: Channel[]
+    result: boolean
 }

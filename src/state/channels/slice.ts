@@ -1,35 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { RequestStatus } from "state/shared/requestStatus";
 import { ChannelState } from "./types"
-import * as thunks from './thunks'
 
 const initialState: ChannelState = {
-    channels: [],
-    status: RequestStatus.Idle,
-    error: ""
+    isChannelsOpen: true,
 }
 
 const channelsSlice = createSlice({
     name: "channels",
     initialState,
     reducers: { 
-        
-    },
-    extraReducers: (builder) => {
-        builder.addCase(thunks.getChannels.pending, (state, action) => {
-            state.status = RequestStatus.Requesting;
-        })
-        builder.addCase(thunks.getChannels.fulfilled, (state, action) => {
-            const result = action.payload;
-            state.channels = result.channels;
-            state.status = RequestStatus.Succeeded;
-        })
-        builder.addCase(thunks.getChannels.rejected, (state, action) => {
-            state.status = RequestStatus.Failed;
-            state.error = action.payload as string;
-        })
+        toggleIsChannelsOpen(state) {
+            state.isChannelsOpen = !state.isChannelsOpen;
+        },
+        openChannels(state) {
+            state.isChannelsOpen = true;
+        },
+        closeChannels(state) {
+            state.isChannelsOpen = false;
+        }
     }
 })
 
-// export const { } = channelsSlice.actions;
+export const { toggleIsChannelsOpen, openChannels, closeChannels } = channelsSlice.actions;
 export default channelsSlice.reducer;

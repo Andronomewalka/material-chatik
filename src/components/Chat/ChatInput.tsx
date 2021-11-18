@@ -14,7 +14,12 @@ const ChatInput: React.FC<ChatInputProp> = ({ onSubmit }) => {
   };
 
   return (
-    <InputContainer onSubmit={onSubmitInternal}>
+    <InputContainer
+      onSubmit={onSubmitInternal}
+      sx={{
+        marginLeft: "-8px",
+      }}
+    >
       <InputBase
         sx={{
           width: "100%",

@@ -1,8 +1,10 @@
 import { BaseState } from 'state/shared/baseState'
+import { IdProp } from 'utils/idProp';
 
-export interface User {
+export interface User extends IdProp {
     name: string,
-    imagePath: string
+    description?: string,
+    imagePath?: string
 }
 
 export interface UserState extends BaseState {

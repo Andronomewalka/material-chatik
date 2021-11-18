@@ -18,6 +18,10 @@ const auhtSlice = createSlice({
     changeError(state, action: PayloadAction<string>) {
       const error = action.payload;
       state.error = error;
+    },
+    changeEmail(state, action:PayloadAction<string>) {
+      const email = action.payload;
+      state.email = email;
     }
   },
   extraReducers: (builder) => {
@@ -85,5 +89,5 @@ const auhtSlice = createSlice({
   }
 });
 
-export const { changeError } = auhtSlice.actions;
+export const { changeError, changeEmail } = auhtSlice.actions;
 export default auhtSlice.reducer;

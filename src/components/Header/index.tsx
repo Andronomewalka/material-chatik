@@ -13,13 +13,16 @@ import {
 import { styled, alpha } from "@mui/material/styles";
 import { AccountCircle, Search, Menu as MenuIcon } from "@mui/icons-material";
 import { useAppDispatch } from "hooks/useAppDispatch";
-import { signOut } from "state/auth";
+import { selectIsSignedIn, signOut } from "state/auth";
+import { useAppSelector } from "hooks/useAppSelector";
+import { toggleIsChannelsOpen } from "state/channels";
 
 const Header = () => {
   const theme = useTheme();
   const isUpXsmScreen = useMediaQuery(theme.breakpoints.up("xsm"));
   const [accountAnchor, setAccountAnchor] = useState<Element | null>(null);
   const dispatch = useAppDispatch();
+  const isSignedIn = useAppSelector(selectIsSignedIn);
 
   const openAccountPopup = (event: SyntheticEvent) => {
     setAccountAnchor(event.currentTarget);
@@ -34,60 +37,71 @@ const Header = () => {
     dispatch(signOut());
   };
 
+  const onMenuClicked = () => {
+    dispatch(toggleIsChannelsOpen());
+  };
+
   return (
-    <AppBar position="static">
-      <Toolbar>
-        <LogoContainer>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-          >
-            <MenuIcon />
-          </IconButton>
-          {isUpXsmScreen && <LogoText variant="h6">Chatik</LogoText>}
-        </LogoContainer>
+    <>
+      {isSignedIn ? (
+        <AppBar position="static">
+          <Toolbar>
+            <LogoContainer>
+              <IconButton
+                size="large"
+                edge="start"
+                color="inherit"
+                aria-label="menu"
+                onClick={onMenuClicked}
+              >
+                <MenuIcon />
+              </IconButton>
+              {isUpXsmScreen && <LogoText variant="h6">Chatik</LogoText>}
+            </LogoContainer>
 
-        <SearchContainer>
-          <Search />
-          <InputBase
-            sx={{ width: "100%", color: "inherit", paddingLeft: 1 }}
-            placeholder="Search..."
-          />
-        </SearchContainer>
+            <SearchContainer>
+              <Search />
+              <InputBase
+                sx={{ width: "100%", color: "inherit", paddingLeft: 1 }}
+                placeholder="Search..."
+              />
+            </SearchContainer>
 
-        <IconButton
-          size="large"
-          sx={{ marginRight: -2 }}
-          aria-label="account of current user"
-          aria-controls="menu-appbar"
-          aria-haspopup="true"
-          onClick={openAccountPopup}
-          color="inherit"
-        >
-          <AccountCircle />
-        </IconButton>
-        <Menu
-          id="menu-appbar"
-          anchorEl={accountAnchor}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          keepMounted
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          open={Boolean(accountAnchor)}
-          onClose={closeAccountPopup}
-        >
-          <MenuItem onClick={closeAccountPopup}>Profile</MenuItem>
-          <MenuItem onClick={onLogoutClicked}>Logout</MenuItem>
-        </Menu>
-      </Toolbar>
-    </AppBar>
+            <IconButton
+              size="large"
+              sx={{ marginRight: -2 }}
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={openAccountPopup}
+              color="inherit"
+            >
+              <AccountCircle />
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={accountAnchor}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              open={Boolean(accountAnchor)}
+              onClose={closeAccountPopup}
+            >
+              <MenuItem onClick={closeAccountPopup}>Profile</MenuItem>
+              <MenuItem onClick={onLogoutClicked}>Logout</MenuItem>
+            </Menu>
+          </Toolbar>
+        </AppBar>
+      ) : (
+        <div />
+      )}
+    </>
   );
 };
 

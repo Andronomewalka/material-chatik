@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { MessageProp, MessageType } from "components/Message";
 import { nanoid } from "nanoid";
-import ChatInput from "./ChatInput";
-import ChatHistory from "./ChatHistory";
+import ChatInput from "components/Chat/ChatInput";
+import ChatHistory from "components//Chat/ChatHistory";
 import BoxContainer from "components/Common/BoxContainer";
+import { Box } from "@mui/system";
+import Channels from "components/Channels";
+import { Divider } from "@mui/material";
 
 function getFakeMessages(): Array<MessageProp> {
   const res: Array<MessageProp> = [];
@@ -40,10 +43,22 @@ const Chat: React.FC = () => {
   }, []);
 
   return (
-    <BoxContainer>
-      <ChatHistory messages={messages} />
-      <ChatInput onSubmit={onNewSendMessage} />
-    </BoxContainer>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        height: "100%",
+        "& > div:last-child": {
+          flex: "1 0",
+        },
+      }}
+    >
+      <Channels />
+      <BoxContainer>
+        <ChatHistory messages={messages} />
+        <ChatInput onSubmit={onNewSendMessage} />
+      </BoxContainer>
+    </Box>
   );
 };
 

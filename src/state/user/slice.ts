@@ -5,7 +5,9 @@ import * as thunks from './thunks'
 
 const initialState: UserState = {
     user: {
+        id: "",
         name: "",
+        description: "",
         imagePath: ""
     },
     status: RequestStatus.Idle,

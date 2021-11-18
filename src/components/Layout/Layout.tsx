@@ -21,6 +21,7 @@ const Layout: React.FC = () => {
     if (!isSignedIn) {
       dispatch(refreshTokenSignIn());
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -36,7 +37,7 @@ const Layout: React.FC = () => {
         display="grid"
         height="100%"
         direction="column"
-        justifyContent="strech"
+        justifyContent="stretch"
         alignItems="stretch"
         sx={{
           gridTemplateRows: "auto 1fr auto",

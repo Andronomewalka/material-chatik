@@ -11,6 +11,7 @@ import {
 import apiClient, { attachTokenToRequest } from "utils/apiClient";
 import { AxiosResponse } from "axios";
 import { parseJwt } from "utils/parseJwt";
+import { ResponseError } from "utils/ResponseError";
 
 export const signIn = createAsyncThunk<ThunkSignInResult, AuthRequest>
 ("auth/signIn", async (authRequest, { rejectWithValue }) => {
@@ -30,7 +31,7 @@ export const signIn = createAsyncThunk<ThunkSignInResult, AuthRequest>
       throw new Error(response.statusText);
 
     else if (response.data.code < 200 || response.data.code >= 300)
-      throw new Error(response.data.error);
+      throw new ResponseError(response.data.code, response.data.error);
 
     if (response.data.accessToken) {
       const token = response.data.accessToken;
@@ -48,19 +49,20 @@ export const refreshTokenSignIn = createAsyncThunk<ThunkSignInResult>
   try {
     const response: AxiosResponse<SignUpResponseDTO> = 
       apiClient.wrapResponse(await apiClient.refreshToken());
-
-      if (response.status < 200 || response.status >= 300)
+      
+    if (response.status < 200 || response.status >= 300)
       throw new Error(response.statusText);
 
     else if (response.data.code < 200 || response.data.code >= 300)
-      throw response.data;
+      throw new ResponseError(response.data.code, response.data.error);
     
     const email = parseJwt(response.data.accessToken)['email']
     
     return { email }
   } catch (err: any) {
-    if (err.code !== 9001) // refresh expired
-      return rejectWithValue(err ?? "signing in through refresh fucked up");
+    if (err instanceof ResponseError && err.code !== 9001) // refresh expired
+        return rejectWithValue(err.message ?? "signing in through refresh fucked up");
+    
     else 
       return rejectWithValue("");
   }
@@ -83,8 +85,13 @@ export const signUp = createAsyncThunk<ThunkSignUpResult, AuthRequest>
         withCredentials: true 
       }));
 
+      console.log(response);
+
     if (response.status < 200 || response.status >= 300)
       throw new Error(response.statusText);
+
+    else if (response.data.code < 200 || response.data.code >= 300)
+      throw new ResponseError(response.data.code, response.data.error);
 
     if (!response.data.serverValidationError) {
       const token = response.data.accessToken;
@@ -98,7 +105,7 @@ export const signUp = createAsyncThunk<ThunkSignUpResult, AuthRequest>
     }
 
   } catch (err: any) {
-    return rejectWithValue(err?.message ?? "signing up fucked up");
+    return rejectWithValue(err.message ?? "signing up fucked up");
   }
 });
 
@@ -113,7 +120,7 @@ export const signOut = createAsyncThunk<ThunkSignInResult>
     attachTokenToRequest("");
     return { email: "" }
   } catch (err: any) {
-    return rejectWithValue(err?.message ?? "signing in fucked up");
+    return rejectWithValue(err?.message ?? "signing out fucked up");
   }
   finally {
     attachTokenToRequest("");
