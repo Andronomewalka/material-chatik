@@ -2,6 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 import { RequestStatus } from "state/shared/requestStatus";
 import { ConnectedUserstate } from "./types"
 import * as thunks from './thunks'
+import * as channelThunks from "state/channels"
+import { User } from "state/user";
 
 const initialState: ConnectedUserstate = {
     connectedUsers: [],
@@ -26,6 +28,14 @@ const roomsSlice = createSlice({
         builder.addCase(thunks.getConnectedUsers.rejected, (state, action) => {
             state.status = RequestStatus.Failed;
             state.error = action.payload as string;
+        })
+
+        builder.addCase(channelThunks.connectChannel.fulfilled, (state, action) => {
+            const channel = action.payload.channel;
+            const userChannel = channel as User;
+            if (userChannel !== undefined ) {
+                state.connectedUsers.push(userChannel);
+            }
         })
     }
 })

@@ -28,6 +28,11 @@ const messagesSlice = createSlice({
             state.status = RequestStatus.Failed;
             state.error = action.payload as string;
         })
+
+        builder.addCase(thunks.sendMessage.fulfilled, (state, action) => {
+            const message = action.payload;
+            state.messages.push(message);
+        })
     }
 })
 

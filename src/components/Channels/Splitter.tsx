@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MouseEvent } from "react";
 import { Box } from "@mui/system";
 import { Divider } from "@mui/material";
 import { SplitterProp } from "./types";
@@ -11,8 +11,11 @@ const Splitter: React.FC<SplitterProp> = ({
   containerRef,
   channelWidthRef,
 }) => {
-  const onDividerMouseDown = (e: any) => {
+  const onDividerMouseDown = (e: MouseEvent) => {
     if (!containerRef.current) return;
+
+    // without it mouseUp not firing in 5% cases if you drag hard;
+    e.preventDefault();
 
     const container = containerRef.current;
     const prevTransitionStyle = container.style.transition;
@@ -20,29 +23,31 @@ const Splitter: React.FC<SplitterProp> = ({
     const initX = e.clientX;
     let lastX = initX;
 
-    window.addEventListener("mousemove", mouseMove);
-    window.addEventListener("mouseup", mouseUp);
+    document.addEventListener("mousemove", mouseMove);
+    document.addEventListener("mouseup", mouseUp);
 
     function mouseMove(e: any) {
       if (container) {
         const newChannelsWidth =
           getPxValue(container.style.width) + e.clientX - lastX;
 
-        container.style.width = `${
-          newChannelsWidth < 100 ? 100 : newChannelsWidth
-        }px`;
-
-        channelWidthRef.current = container.style.width;
-        lastX = e.clientX;
+        if (newChannelsWidth > 100) {
+          container.style.width = `${newChannelsWidth}px`;
+          channelWidthRef.current = container.style.width;
+          lastX = e.clientX;
+        }
+      } else {
+        mouseUp();
       }
     }
 
     function mouseUp() {
-      window.removeEventListener("mousemove", mouseMove);
-      window.removeEventListener("mouseup", mouseUp);
+      document.removeEventListener("mousemove", mouseMove);
+      document.removeEventListener("mouseup", mouseUp);
       container.style.transition = prevTransitionStyle;
     }
   };
+
   return (
     <Box
       onMouseDown={onDividerMouseDown}
@@ -73,8 +78,10 @@ const Splitter: React.FC<SplitterProp> = ({
       <Divider
         orientation="vertical"
         sx={{
+          background: "#e0e0e0",
           borderRightWidth: "2px",
           borderLeftWidth: "2px",
+          borderColor: "#e0e0e0",
           transition: ".2s all ease",
         }}
       />

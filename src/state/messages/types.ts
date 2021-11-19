@@ -1,10 +1,10 @@
 import { BaseState } from "state/shared/baseState";
 import { User } from "state/user";
-import { IdProp } from "utils/idProp";
+import { IdPropStrict } from "utils/idProp";
 
-export interface Message extends IdProp {
+export interface Message extends IdPropStrict {
     sender: User,
-    receiver: User,
+    receiverId: string,
     dateUtc: string,
     text: string
 }

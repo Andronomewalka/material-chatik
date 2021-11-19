@@ -6,16 +6,16 @@ import apiClient from "utils/apiClient";
 
 const fakeRooms:Room[] = [
 	{ 
-		id: 3,
+		id: "333",
     name: "dev room 1",
     members: [
 			{ 
-				id: 0,
+				id: "111",
 				name: "Vasiliy",
 				description: "Java",
 			},
 			{ 
-				id: 1,
+				id: "222",
 				name: "Maksim",
 				description: "Perl",
 			}

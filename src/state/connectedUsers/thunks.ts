@@ -6,12 +6,12 @@ import apiClient from "utils/apiClient";
 
 const fakeUsers:User[] = [
 	{ 
-		id: 0,
+		id: "111",
     name: "Boris",
     description: "some"
   },
   { 
-		id: 1,
+		id: "222",
     name: "Andrew",
     description: "another"
   },

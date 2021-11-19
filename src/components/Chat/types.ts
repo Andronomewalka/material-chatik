@@ -1,7 +1,7 @@
-import { MessageProp } from "components/Message";
+import { Message } from "state/messages"
 
 export interface ChatHistoryProp {
-    messages: MessageProp[]
+    messages: Message[]
 }
 
 export interface ChatInputProp {

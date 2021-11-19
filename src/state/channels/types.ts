@@ -1,15 +1,15 @@
-import { BaseState } from "state/shared/baseState";
-import { User } from 'state/user'
-import { IdProp } from "utils/idProp";
-
-export interface Channel extends User, IdProp {
-    members: User[],
-}
+import { Room } from "state/rooms";
+import { User } from "state/user";
 
 export interface ChannelState {
+    selectedChannelId: string,
     isChannelsOpen: boolean
 }
 
 export interface ThunkChannelsResult {
     result: boolean
+}
+
+export interface ThunkConnectChannelResult {
+    channel: User | Room
 }

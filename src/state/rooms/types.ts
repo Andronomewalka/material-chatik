@@ -1,8 +1,7 @@
 import { BaseState } from "state/shared/baseState";
 import { User } from 'state/user'
-import { IdProp } from "utils/idProp";
 
-export interface Room extends User, IdProp {
+export interface Room extends User {
     members: User[]
 }
 

@@ -4,6 +4,9 @@ import { RootState } from "state/store";
 export const selectChannels = (state: RootState) =>
  [...state.connectedUsers.connectedUsers, ...state.rooms.rooms];
 
+ export const selectChannelId = (state: RootState) => 
+  state.channels.selectedChannelId;
+
  export const selectFetchStatus = (state: RootState) => {
    
     if (state.connectedUsers.status === RequestStatus.Requesting || 
