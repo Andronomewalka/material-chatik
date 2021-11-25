@@ -10,6 +10,7 @@ const getPxValue = (value: string) => {
 const Splitter: React.FC<SplitterProp> = ({
   containerRef,
   channelWidthRef,
+  minChannelsWidth,
 }) => {
   const onDividerMouseDown = (e: MouseEvent) => {
     if (!containerRef.current) return;
@@ -31,7 +32,7 @@ const Splitter: React.FC<SplitterProp> = ({
         const newChannelsWidth =
           getPxValue(container.style.width) + e.clientX - lastX;
 
-        if (newChannelsWidth > 100) {
+        if (newChannelsWidth > minChannelsWidth) {
           container.style.width = `${newChannelsWidth}px`;
           channelWidthRef.current = container.style.width;
           lastX = e.clientX;

@@ -1,89 +1,33 @@
-import axios, { AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { Message, ThunkMessagesResult } from "./types";
+import { 
+  GetMessagesResponseDTO, 
+  SendMessageRequestDTO, 
+  SendMessageResponseDTO, 
+  ThunkGetMessagesResult, 
+  ThunkSendMessageResult 
+} from "./types";
 import apiClient from "utils/apiClient";
+import { ResponseError } from "utils/ResponseError";
+import { hub } from "utils/chatikHub";
 
-
-const fakeBorisMessages:Message[] = [
-	{ 
-    id: "message-1", 
-    sender:{
-      id: "000",
-      name: "Boris",
-      description: "some"
-    },
-    receiverId: "000",
-    text: "Hello from Boris",
-    dateUtc: new Date().toString()
-  }];
-
-  const fakeAndrewMessages:Message[] = [
-    { 
-      id: "message-2", 
-      sender: { 
-        id: "000",
-        name: "Current user",
-        description: "awesome"
-      },
-      receiverId: "222",
-      text: "Hello Andrew",
-      dateUtc: new Date().toString()
-    }, 
-    { 
-      id: "message-3", 
-      sender: { 
-        id: "222",
-        name: "Andrew",
-        description: "another"
-      },
-      receiverId: "000",
-      text: "Hi",
-      dateUtc: new Date().toString()
-    }, 
-  ];
-
-export const getMessages = createAsyncThunk<ThunkMessagesResult, string | number>
+export const getMessages = createAsyncThunk<ThunkGetMessagesResult, number>
 ("messages/getMessages", async (channelId, { rejectWithValue }) => {
   try {
-
-    if (channelId === "111")
-      return { messages: fakeBorisMessages };
-
-      else if (channelId === "222")
-        return { messages: fakeAndrewMessages };
-      
-      else 
-        return { messages: [] };
-
-    // const response: AxiosResponse<ThunkMessagesResult> =
-    //   await apiClient.withRefresh((async () => 
-    //     await axios.get(`http://127.0.0.1:4000/messages?channel_id=${channelId}`)))
+    
+    const response: AxiosResponse<GetMessagesResponseDTO> = 
+      await apiClient.withRefresh(async () => 
+        await apiClient.get(`http://127.0.0.1:4000/messages?channelId=${channelId}`));
     
     // console.log(response);
 
-    // if (response.status < 200 || response.status >= 300)
-    //   throw new Error(response.statusText);
+    if (response.status < 200 || response.status >= 300)
+      throw new Error(response.statusText);
 
-    // return response.data;
-  } catch (err: any) {
-    return rejectWithValue(err?.message ?? "get messages fucked up");
-  }
-});
+    else if (response.data.code < 200 || response.data.code >= 300)
+      throw new ResponseError(response.data.code, response.data.error);
 
-export const sendMessage =  createAsyncThunk<Message, Message>
-("messages/sendMessage", async (message, { rejectWithValue }) => {
-  try {
-    
-    // const response: AxiosResponse<boolean> =
-    //   await apiClient.withRefresh((async () => 
-    //     await axios.post(`http://127.0.0.1:4000/messages/send`, message)))
-
-    // console.log(response);
-
-    // if (response.status < 200 || response.status >= 300)
-    //   throw new Error(response.statusText);
-
-    return message;
+    return { messages: response.data.messages }
   } catch (err: any) {
     return rejectWithValue(err?.message ?? "get messages fucked up");
   }

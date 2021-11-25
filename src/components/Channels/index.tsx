@@ -26,6 +26,7 @@ import AddChannel from "./AddChannel";
 import CreateRoom from "./CreateRoom";
 
 const initChannelsWidth = "250px";
+const minChannelsWidth = 200;
 
 const Channels: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -38,11 +39,11 @@ const Channels: React.FC = () => {
   const channelWidthRef = useRef(initChannelsWidth);
 
   useEffect(() => {
-    dispatch(getChannels()).then();
-  }, []);
+    dispatch(getChannels());
+  }, [dispatch]);
 
   useEffect(() => {
-    if (selectedChannelId === "0") {
+    if (selectedChannelId === 0) {
       if (channels && channels.length > 0) {
         dispatch(changeSelectedChannel(channels[0].id));
       }
@@ -52,7 +53,7 @@ const Channels: React.FC = () => {
   const onChannelsClick = (e: React.MouseEvent<HTMLUListElement>) => {
     const liChannel = (e.target as any).closest("li");
     if (liChannel) {
-      const newChannelId = liChannel.getAttribute("data-id");
+      const newChannelId = +liChannel.getAttribute("data-id");
       if (newChannelId !== selectedChannelId) {
         dispatch(changeSelectedChannel(newChannelId));
       }
@@ -119,7 +120,11 @@ const Channels: React.FC = () => {
           <CreateRoom />
         </Box>
       )}
-      <Splitter containerRef={containerRef} channelWidthRef={channelWidthRef} />
+      <Splitter
+        containerRef={containerRef}
+        channelWidthRef={channelWidthRef}
+        minChannelsWidth={minChannelsWidth}
+      />
     </Box>
   );
 };

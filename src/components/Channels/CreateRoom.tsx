@@ -21,6 +21,7 @@ const CreateRoom: React.FC = () => {
         sx={{
           justifyContent: "start",
           paddingLeft: "20px",
+          marginBottom: "5px",
         }}
         onClick={openDialog}
       >

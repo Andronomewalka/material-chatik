@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { Formik, Field, FormikHelpers, FormikProps } from "formik";
+import { Formik, Field, FormikHelpers } from "formik";
 import { useAppDispatch } from "hooks/useAppDispatch";
 import {
   changeEmail,
@@ -61,7 +61,6 @@ const initialValidationRules: ValidationRule[] = [
 
 const SignIn: React.FC = () => {
   const dispatch = useAppDispatch();
-  const formikRef = useRef<FormikProps<SignUpFormValues>>(null);
   const wrapperRef = useRef(null);
   const email = useAppSelector(selectEmail);
   const status = useAppSelector(selectFetchStatus);
@@ -121,7 +120,6 @@ const SignIn: React.FC = () => {
 
   return (
     <Formik
-      ref={formikRef}
       initialValues={{
         email: email === null ? "" : email,
         password: "",
@@ -235,7 +233,7 @@ const SignIn: React.FC = () => {
             type="submit"
             disabled={isSubmitting}
           >
-            Submit
+            Sign Up
           </Button>
           <Box height="54px">
             {isSubmitting && <LinearProgress />}

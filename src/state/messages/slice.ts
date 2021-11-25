@@ -1,7 +1,8 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RequestStatus } from "state/shared/requestStatus";
-import { MessagesState } from "./types";
+import { Message, MessagesState, SendMessageResponseDTO } from "./types";
 import * as thunks from './thunks'
+import { signOut } from "state/auth"
 
 const initialState: MessagesState = {
     messages: [],
@@ -13,7 +14,10 @@ const messagesSlice = createSlice({
     name: 'messages',
     initialState,
     reducers: {
-
+        addMessage(state, action: PayloadAction<Message>) {
+            const message = action.payload;
+            state.messages.push(message);
+        }
     },
     extraReducers: (builder) => {
         builder.addCase(thunks.getMessages.pending, (state, action) => {
@@ -29,12 +33,11 @@ const messagesSlice = createSlice({
             state.error = action.payload as string;
         })
 
-        builder.addCase(thunks.sendMessage.fulfilled, (state, action) => {
-            const message = action.payload;
-            state.messages.push(message);
+        builder.addCase(signOut.pending, () => {
+            return initialState;
         })
     }
 })
 
-// export const { } = messagesSlice.actions;
+export const { addMessage } = messagesSlice.actions;
 export default messagesSlice.reducer;

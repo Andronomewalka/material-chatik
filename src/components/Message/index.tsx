@@ -1,7 +1,7 @@
 import React from "react";
-import { MessageProp, MessageType } from "./types";
 import { Paper, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { Message as MessageProp, MessageType } from "state/messages";
 
 const Message: React.FC<MessageProp> = ({ text, user, type }) => {
   const theme = useTheme();

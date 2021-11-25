@@ -1,27 +1,29 @@
 import { AxiosResponse } from "axios";
-import { createAsyncThunk, nanoid } from "@reduxjs/toolkit";
-import { ThunkChannelsResult, ThunkConnectChannelResult } from "./types";
-import { User } from "state/user";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import { 
+  ThunkGetChannelsResult, 
+  ThunkConnectChannelResult, 
+  GetChannelsResponseDTO, 
+  ConnectChannelResponseDTO 
+} from "./types";
 import apiClient from "utils/apiClient";
-import { getConnectedUsers } from "state/connectedUsers";
-import { getRooms } from "state/rooms";
+import { ResponseError } from "utils/ResponseError";
 
-export const getChannels = createAsyncThunk<ThunkChannelsResult>
-("channels/getChannels", async (_, { dispatch, rejectWithValue }) => {
+export const getChannels = createAsyncThunk<ThunkGetChannelsResult>
+("channels/getChannels", async (_, { rejectWithValue }) => {
   try {
 
-    await dispatch(getConnectedUsers());
-    await dispatch(getRooms());
-    return { result : true };
+    const response: AxiosResponse<GetChannelsResponseDTO> = 
+      await apiClient.withRefresh(async () => 
+        await apiClient.get('http://127.0.0.1:4000/channels'));
 
-    // const response: AxiosResponse<ThunkChannelsResult> = 
-    //   await apiClient.get('http://127.0.0.1:4000/channels');
-    // console.log(response);
+    if (response.status < 200 || response.status >= 300)
+      throw new Error(response.statusText);
 
-    // if (response.status < 200 || response.status >= 300)
-    //   throw new Error(response.statusText);
+      else if (response.data.code < 200 || response.data.code >= 300)
+        throw new ResponseError(response.data.code, response.data.error);
       
-    // return response.data;
+    return { channels: response.data.channels };
   } catch (err: any) {
     return rejectWithValue(err?.message ?? "get channels fucked up");
   }
@@ -29,25 +31,21 @@ export const getChannels = createAsyncThunk<ThunkChannelsResult>
 
 
 export const connectChannel = createAsyncThunk<ThunkConnectChannelResult, string>
-("channels/connectChannel", async (channelName, { dispatch, rejectWithValue }) => {
+("channels/connectChannel", async (channelName, { rejectWithValue }) => {
   try {
 
-    await dispatch(getConnectedUsers());
-    
-    return { channel : { 
-      id: nanoid(),
-      name: channelName,
-      description: "some description", 
-    } };
+    const response: AxiosResponse<ConnectChannelResponseDTO> = 
+     await apiClient.withRefresh(async () =>
+        await apiClient.post('http://127.0.0.1:4000/channels/connect', channelName));
 
-    // const response: AxiosResponse<ThunkChannelsResult> = 
-    //   await apiClient.get('http://127.0.0.1:4000/channels');
-    // console.log(response);
+    console.log(response);
+    if (response.status < 200 || response.status >= 300)
+      throw new Error(response.statusText);
 
-    // if (response.status < 200 || response.status >= 300)
-    //   throw new Error(response.statusText);
+    else if (response.data.code < 200 || response.data.code >= 300)
+      throw new ResponseError(response.data.code, response.data.error);
       
-    // return response.data;
+    return { connectedChannel: response.data.channel };
   } catch (err: any) {
     return rejectWithValue(err?.message ?? "get channels fucked up");
   }

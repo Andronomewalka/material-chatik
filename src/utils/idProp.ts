@@ -3,5 +3,5 @@ export interface IdProp {
 }
 
 export interface IdPropStrict {
-    id: string;
+    id: number;
 }

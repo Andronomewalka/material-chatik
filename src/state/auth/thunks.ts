@@ -12,6 +12,8 @@ import apiClient, { attachTokenToRequest } from "utils/apiClient";
 import { AxiosResponse } from "axios";
 import { parseJwt } from "utils/parseJwt";
 import { ResponseError } from "utils/ResponseError";
+import { hub } from "utils/chatikHub";
+import { sendMessage } from "utils/reMess";
 
 export const signIn = createAsyncThunk<ThunkSignInResult, AuthRequest>
 ("auth/signIn", async (authRequest, { rejectWithValue }) => {
@@ -38,6 +40,8 @@ export const signIn = createAsyncThunk<ThunkSignInResult, AuthRequest>
       attachTokenToRequest(`Bearer ${token}`);
     }
 
+    await hub.start();
+    sendMessage('HubConnectionStateChanged', hub.state);
     return { email: authRequest.email }
   } catch (err: any) {
     return rejectWithValue(err?.message ?? "signing in fucked up");
@@ -58,6 +62,8 @@ export const refreshTokenSignIn = createAsyncThunk<ThunkSignInResult>
     
     const email = parseJwt(response.data.accessToken)['email']
     
+    await hub.start();
+    sendMessage('HubConnectionStateChanged', hub.state);
     return { email }
   } catch (err: any) {
     if (err instanceof ResponseError && err.code !== 9001) // refresh expired
@@ -65,9 +71,6 @@ export const refreshTokenSignIn = createAsyncThunk<ThunkSignInResult>
     
     else 
       return rejectWithValue("");
-  }
-  finally {
-    attachTokenToRequest("");
   }
 }); 
 
@@ -98,12 +101,13 @@ export const signUp = createAsyncThunk<ThunkSignUpResult, AuthRequest>
       attachTokenToRequest(`Bearer ${token}`);
     }
 
+    await hub.start();
+    sendMessage('HubConnectionStateChanged', hub.state);
     return { 
       success: !response.data.serverValidationError,
       email: authRequest.email,
       serverValidationError: response.data.serverValidationError
     }
-
   } catch (err: any) {
     return rejectWithValue(err.message ?? "signing up fucked up");
   }
@@ -117,6 +121,8 @@ export const signOut = createAsyncThunk<ThunkSignInResult>
          withCredentials: true 
         });  
 
+    await hub.stop();
+    sendMessage('HubConnectionStateChanged', hub.state);
     attachTokenToRequest("");
     return { email: "" }
   } catch (err: any) {

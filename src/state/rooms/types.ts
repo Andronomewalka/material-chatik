@@ -12,3 +12,7 @@ export interface RoomState extends BaseState {
 export interface ThunkRoomsResult {
     rooms: Room[]
 }
+
+export interface ThunkConnectRoomResult {
+    room: Room
+}

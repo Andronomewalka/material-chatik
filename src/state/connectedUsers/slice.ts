@@ -1,9 +1,9 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RequestStatus } from "state/shared/requestStatus";
 import { ConnectedUserstate } from "./types"
-import * as thunks from './thunks'
-import * as channelThunks from "state/channels"
 import { User } from "state/user";
+import * as thunks from './thunks'
+import * as authThunks from "state/auth/thunks"
 
 const initialState: ConnectedUserstate = {
     connectedUsers: [],
@@ -15,6 +15,10 @@ const roomsSlice = createSlice({
     name: "connectedUsers",
     initialState,
     reducers: { 
+        connectUser(state, action: PayloadAction<User>) {
+            const user = action.payload;
+            state.connectedUsers.push(user)
+        }
     },
     extraReducers: (builder) => {
         builder.addCase(thunks.getConnectedUsers.pending, (state, action) => {
@@ -30,15 +34,11 @@ const roomsSlice = createSlice({
             state.error = action.payload as string;
         })
 
-        builder.addCase(channelThunks.connectChannel.fulfilled, (state, action) => {
-            const channel = action.payload.channel;
-            const userChannel = channel as User;
-            if (userChannel !== undefined ) {
-                state.connectedUsers.push(userChannel);
-            }
+        builder.addCase(authThunks.signOut.pending, () => {
+            return initialState;
         })
     }
 })
 
-//  export const { } = roomsSlice.actions;
+export const { connectUser } = roomsSlice.actions;
 export default roomsSlice.reducer;

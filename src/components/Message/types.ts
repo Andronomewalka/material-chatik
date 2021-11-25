@@ -1,6 +1,4 @@
-export enum MessageType {
-    Send, Receive
-}
+import { MessageType } from "state/messages";
 
 export interface MessageProp {
     id: number | string,

@@ -27,6 +27,7 @@ const auhtSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(thunks.signIn.pending, (state, action) => {
       state.status = RequestStatus.Requesting;
+      state.error = "";
     });
     builder.addCase(thunks.signIn.fulfilled, (state, action) => {
       state.status = RequestStatus.Succeeded;
@@ -41,6 +42,7 @@ const auhtSlice = createSlice({
 
     builder.addCase(thunks.refreshTokenSignIn.pending, (state, action) => {
       state.layoutStatus = RequestStatus.Requesting;
+      state.error = "";
     });
     builder.addCase(thunks.refreshTokenSignIn.fulfilled, (state, action) => {
       state.layoutStatus = RequestStatus.Succeeded;
@@ -55,6 +57,7 @@ const auhtSlice = createSlice({
 
     builder.addCase(thunks.signUp.pending, (state, action) => {
       state.status = RequestStatus.Requesting;
+      state.error = "";
     });
     builder.addCase(thunks.signUp.fulfilled, (state, action) => {
       state.status = RequestStatus.Succeeded;
@@ -74,17 +77,19 @@ const auhtSlice = createSlice({
 
     builder.addCase(thunks.signOut.pending, (state, action) => {
       state.layoutStatus = RequestStatus.Requesting;
+      state.error = "";
     })
     builder.addCase(thunks.signOut.fulfilled, (state, action) => {
       state.layoutStatus = RequestStatus.Succeeded;
       state.email = "";
+      state.error = "";
       state.isSignedIn = false;
     });
     builder.addCase(thunks.signOut.rejected, (state, action) => {
       state.layoutStatus = RequestStatus.Failed;
       state.email = "";
-      state.isSignedIn = false;
       state.error = action.payload as string;
+      state.isSignedIn = false;
     });
   }
 });

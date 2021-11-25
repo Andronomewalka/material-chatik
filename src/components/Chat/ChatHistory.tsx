@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { ChatHistoryProp } from "./types";
-import Message, { MessageType } from "components/Message";
+import Message from "components/Message";
 import {
   List,
   AutoSizer,
@@ -71,16 +71,7 @@ const ChatHistory: React.FC<ChatHistoryProp> = ({ messages }) => {
                     rowIndex={index}
                   >
                     <div style={style}>
-                      <Message
-                        key={message.id}
-                        user={message.sender.name}
-                        type={
-                          message.receiverId === user.id
-                            ? MessageType.Receive
-                            : MessageType.Send
-                        }
-                        {...message}
-                      />
+                      <Message key={message.id} {...message} />
                     </div>
                   </CellMeasurer>
                 );

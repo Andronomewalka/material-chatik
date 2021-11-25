@@ -1,22 +1,37 @@
-import React, { SyntheticEvent, useState } from "react";
+import React, { SyntheticEvent, useState, useEffect, useCallback } from "react";
 import {
   Box,
   Button,
+  CircularProgress,
   Dialog,
   IconButton,
+  LinearProgress,
   TextField,
   Typography,
 } from "@mui/material";
 import { Add, Close } from "@mui/icons-material";
+import { Formik, Field, FormikHelpers, FormikProps } from "formik";
+import * as Yup from "yup";
 import { useAppDispatch } from "hooks/useAppDispatch";
-import { connectChannel } from "state/channels";
+import {
+  changeConnectChannelError,
+  changeConnectChannelStatus,
+  connectChannel,
+  selectConnectChannelError,
+  selectConnectChannelStatus,
+} from "state/channels";
+import { useAppSelector } from "hooks/useAppSelector";
+import { RequestStatus } from "state/shared/requestStatus";
 
 const AddChannel: React.FC = () => {
   const dispatch = useAppDispatch();
+  const status = useAppSelector(selectConnectChannelStatus);
+  const error = useAppSelector(selectConnectChannelError);
   const [isOpen, setIsOpen] = useState(false);
-  const [input, setInput] = useState("");
 
   const onOpen = (e: any) => {
+    dispatch(changeConnectChannelStatus(RequestStatus.Idle));
+    dispatch(changeConnectChannelError(""));
     setIsOpen(true);
   };
 
@@ -24,15 +39,25 @@ const AddChannel: React.FC = () => {
     setIsOpen(false);
   };
 
-  const onSubmit = (e: SyntheticEvent) => {
-    e.preventDefault();
-    setIsOpen(false);
-    dispatch(connectChannel(input));
+  useEffect(() => {
+    if (status === RequestStatus.Succeeded) {
+      setIsOpen(false);
+    }
+  }, [status]);
+
+  const onSubmit = (
+    { channel }: { channel: string },
+    { setSubmitting }: FormikHelpers<{ channel: string }>
+  ) => {
+    setSubmitting(true);
+    dispatch(connectChannel(channel)).then(() => {
+      setSubmitting(false);
+    });
   };
 
-  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value);
-  };
+  const validationSchema = Yup.object({
+    channel: Yup.string().trim().required("Required"),
+  });
 
   return (
     <>
@@ -42,55 +67,105 @@ const AddChannel: React.FC = () => {
         sx={{
           justifyContent: "start",
           paddingLeft: "20px",
+          marginTop: "5px",
         }}
         onClick={onOpen}
       >
-        Add user
+        Add channel
       </Button>
       <Dialog
         onClose={onClose}
         aria-labelledby="customized-dialog-title"
         open={isOpen}
       >
-        <Box
-          component="form"
+        <Formik
+          initialValues={{ channel: "" }}
+          validationSchema={validationSchema}
           onSubmit={onSubmit}
-          sx={{
-            position: "relative",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            gap: "15px",
-            padding: "30px 40px",
-          }}
         >
-          <IconButton
-            sx={{
-              position: "absolute",
-              top: "0",
-              right: "0",
-            }}
-            onClick={onClose}
-          >
-            <Close />
-          </IconButton>
-          <Typography component="h4" variant="h4">
-            Add User
-          </Typography>
-          <TextField
-            label="User"
-            variant="standard"
-            sx={{
-              width: "300px",
-            }}
-            autoFocus
-            onChange={onInputChange}
-            value={input}
-          />
-          <Button type="submit" variant="contained" onClick={onSubmit}>
-            Add
-          </Button>
-        </Box>
+          {({ errors, touched, setFieldValue, submitForm, isSubmitting }) => (
+            <Box
+              component="form"
+              onSubmit={(e: SyntheticEvent) => {
+                e.preventDefault();
+                submitForm();
+              }}
+              sx={{
+                width: "400px",
+                position: "relative",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                gap: "15px",
+                padding: "30px 40px",
+              }}
+            >
+              <IconButton
+                sx={{
+                  position: "absolute",
+                  top: "0",
+                  right: "0",
+                }}
+                onClick={onClose}
+              >
+                <Close />
+              </IconButton>
+              <Typography
+                component="h4"
+                variant="h4"
+                sx={{
+                  marginBottom: "10px",
+                }}
+              >
+                Add channel
+              </Typography>
+              <Field
+                name="channel"
+                type="input"
+                disabled={isSubmitting}
+                error={errors.channel && touched.channel}
+                helperText={
+                  errors.channel && touched.channel ? errors.channel : ""
+                }
+                as={TextField}
+                label="Channel"
+                variant="outlined"
+              />
+              <Box height="24px">
+                {status !== RequestStatus.Requesting && error && (
+                  <Typography
+                    variant="body1"
+                    component="p"
+                    color="error"
+                    textAlign="center"
+                  >
+                    {error}
+                  </Typography>
+                )}
+              </Box>
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+                disabled={isSubmitting}
+              >
+                Add
+              </Button>
+              {isSubmitting && (
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%,-50%)",
+                  }}
+                >
+                  <CircularProgress />
+                </Box>
+              )}
+            </Box>
+          )}
+        </Formik>
       </Dialog>
     </>
   );

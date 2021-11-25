@@ -18,6 +18,11 @@ export const attachTokenToRequest = (token: string | null = null) => {
     apiClient.defaults.headers['Authorization'] = token;
 }
 
+export const getTokenWithoutBearer = () => {
+    const accessToken: string = apiClient.defaults.headers['Authorization'];
+    return accessToken.substr('Bearer '.length);
+}
+
 apiClient.refreshToken = async () => {
     try {
         const response: AxiosResponse<SignInResponseDTO> = 
@@ -30,6 +35,7 @@ apiClient.refreshToken = async () => {
         return response;
     }
     catch (err: any) {
+        attachTokenToRequest("");
         return { 
             data: {
                 code: 9001,
@@ -54,6 +60,9 @@ apiClient.withRefresh = async (request: Function) => {
 }
 
 apiClient.wrapResponse = (response: any) => {
+    if (!response.data)
+    response.data = {};
+
     if (response.data.code === undefined)
         response.data.code = 200;
     

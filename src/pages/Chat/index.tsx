@@ -1,31 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Box } from "@mui/system";
-import { nanoid } from "nanoid";
 import { useAppDispatch } from "hooks/useAppDispatch";
 import { useAppSelector } from "hooks/useAppSelector";
 import { selectChannelId } from "state/channels";
-import { getMessages, selectMessages, sendMessage } from "state/messages";
-import { MessageProp, MessageType } from "components/Message";
+import { getMessages, selectMessages } from "state/messages";
 import ChatInput from "components/Chat/ChatInput";
 import ChatHistory from "components//Chat/ChatHistory";
 import BoxContainer from "components/Common/BoxContainer";
 import Channels from "components/Channels";
 import { selectUser } from "state/user";
-
-function getFakeMessages(): Array<MessageProp> {
-  const res: Array<MessageProp> = [];
-
-  for (let i = 0; i < 1000; i++) {
-    res.push({
-      id: nanoid(),
-      text: `some - ${i}`,
-      user: "huila",
-      type: i % 2 === 0 ? MessageType.Send : MessageType.Receive,
-    });
-  }
-
-  return res;
-}
+import { hub } from "utils/chatikHub";
 
 const Chat: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -34,20 +18,16 @@ const Chat: React.FC = () => {
   const messages = useAppSelector(selectMessages);
 
   const onNewSendMessage = (text: string) => {
-    dispatch(
-      sendMessage({
-        id: nanoid(),
-        sender: user,
-        receiverId: selectedChannelId,
-        text,
-        dateUtc: new Date().toString(),
-      })
-    );
+    hub.send("SendMessage", {
+      channelId: selectedChannelId,
+      message: text,
+    });
   };
 
   useEffect(() => {
-    console.log("selectedChannelId", selectedChannelId);
-    dispatch(getMessages(selectedChannelId));
+    if (selectedChannelId >= 0) {
+      dispatch(getMessages(selectedChannelId));
+    }
   }, [dispatch, selectedChannelId]);
 
   return (
