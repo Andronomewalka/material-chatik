@@ -36,6 +36,7 @@ const Chat: React.FC = () => {
         display: "flex",
         flexDirection: "row",
         height: "100%",
+        overflow: "hidden",
         "& > div:last-child": {
           flex: "1 0",
         },

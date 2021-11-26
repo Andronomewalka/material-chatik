@@ -1,18 +1,22 @@
-import { Room } from "state/rooms";
 import { BaseState } from "state/shared/baseState";
 import { RequestStatus } from "state/shared/requestStatus";
 import { ResponseBaseDTO } from "state/shared/responseBaseDTO";
 import { User } from "state/user";
+import { Room } from "state/room";
+
+export enum ChannelType {
+    User = 0, Room = 1
+}
 
 export interface Channel extends User {
-    channelType: "User" | "Room"
+    type: ChannelType
 }
 export interface ChannelState extends BaseState {
     channels: Channel[],
     selectedChannelId: number,
     isChannelsOpen: boolean,
-    connectChannelStatus: RequestStatus,
-    connectChannelError : string
+    dialogChannelStatus: RequestStatus,
+    dialogChannelError : string
 }
 
 export interface GetChannelsResponseDTO extends ResponseBaseDTO {
@@ -23,10 +27,6 @@ export interface ConnectChannelResponseDTO extends ResponseBaseDTO {
     channel: Channel
 }
 
-export interface ThunkGetChannelsResult {
-    channels: Channel[]
-}
-
-export interface ThunkConnectChannelResult {
-    connectedChannel: Channel
+export interface GetChannelResponseDTO extends ResponseBaseDTO {
+    channelInfo: Room | User
 }

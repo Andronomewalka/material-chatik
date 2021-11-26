@@ -14,10 +14,20 @@ const messagesSlice = createSlice({
     name: 'messages',
     initialState,
     reducers: {
-        addMessage(state, action: PayloadAction<Message>) {
-            const message = action.payload;
-            state.messages.push(message);
-        }
+        addMessage: {
+            reducer: (state, action:PayloadAction<Message>) => {
+                const message = action.payload;
+                state.messages.push(message);
+            },
+            prepare: (message: Message) => {
+                const messageDate = new Date(message.dateUtc);
+                message.timeUtc = 
+                messageDate.getHours().toString().padStart(2, '0')  + 
+                ":" + 
+                messageDate.getMinutes().toString().padStart(2, '0')
+                return { payload: message };
+            }
+          }
     },
     extraReducers: (builder) => {
         builder.addCase(thunks.getMessages.pending, (state, action) => {
@@ -25,8 +35,8 @@ const messagesSlice = createSlice({
         })
         builder.addCase(thunks.getMessages.fulfilled, (state, action) => {
             state.status = RequestStatus.Succeeded;
-            const result = action.payload;
-            state.messages = result.messages;
+            const messages = action.payload;
+            state.messages = messages;
         })
         builder.addCase(thunks.getMessages.rejected, (state, action) => {
             state.status = RequestStatus.Failed;

@@ -31,7 +31,7 @@ const auhtSlice = createSlice({
     });
     builder.addCase(thunks.signIn.fulfilled, (state, action) => {
       state.status = RequestStatus.Succeeded;
-      state.email = action.payload.email;
+      state.email = action.payload;
       state.error = "";
       state.isSignedIn = true;
     });
@@ -46,7 +46,7 @@ const auhtSlice = createSlice({
     });
     builder.addCase(thunks.refreshTokenSignIn.fulfilled, (state, action) => {
       state.layoutStatus = RequestStatus.Succeeded;
-      state.email = action.payload.email;
+      state.email = action.payload;
       state.error = "";
       state.isSignedIn = true;
     });

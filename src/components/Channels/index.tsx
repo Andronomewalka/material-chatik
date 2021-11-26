@@ -5,15 +5,17 @@ import {
   List,
   ListItem,
   ListItemButton,
+  ListItemIcon,
   ListItemText,
 } from "@mui/material";
+import { People } from "@mui/icons-material";
 import { Box } from "@mui/system";
 import { useAppDispatch } from "hooks/useAppDispatch";
 import { useAppSelector } from "hooks/useAppSelector";
 import { RequestStatus } from "state/shared/requestStatus";
 import {
   changeSelectedChannel,
-  connectChannel,
+  ChannelType,
   getChannels,
   selectChannelId,
   selectChannels,
@@ -94,6 +96,7 @@ const Channels: React.FC = () => {
             onClick={onChannelsClick}
             sx={{
               flex: "1 0",
+              overflowY: "auto",
             }}
           >
             {channels.map((channel) => (
@@ -106,6 +109,15 @@ const Channels: React.FC = () => {
               >
                 <ListItemButton component="div">
                   <ListItemText primary={channel.name} />
+                  {channel.type === ChannelType.Room && (
+                    <ListItemIcon
+                      sx={{
+                        justifyContent: "flex-end",
+                      }}
+                    >
+                      <People />
+                    </ListItemIcon>
+                  )}
                 </ListItemButton>
               </ListItem>
             ))}

@@ -1,19 +1,23 @@
 import { HubConnectionState } from "@microsoft/signalr";
-import { useAppDispatch } from "hooks/useAppDispatch";
-import { addMessage } from "state/messages";
-import { addChannel } from "state/channels";
 import { hub } from "utils/chatikHub";
+import { useAppDispatch } from "hooks/useAppDispatch";
+import { useAppSelector } from "hooks/useAppSelector";
 import { useSubscribe } from "utils/reMess";
+import { addMessage } from "state/messages";
+import { addChannel, selectChannelId } from "state/channels";
 
 const useHubReceiver = () => {
   const dispatch = useAppDispatch();
+  const selectedChannelId = useAppSelector(selectChannelId);
 
   const sendMessageSuccessCallback = (args: any) => {
     dispatch(addMessage(args.value));
   };
 
   const receiveMessageCallback = (args: any) => {
-    dispatch(addMessage(args.value));
+    if (selectedChannelId === args.value.receiverId) {
+      dispatch(addMessage(args.value));
+    }
   };
 
   const channelConnectedCallback = (args: any) => {

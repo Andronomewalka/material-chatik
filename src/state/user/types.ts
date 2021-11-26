@@ -1,4 +1,5 @@
 import { BaseState } from 'state/shared/baseState'
+import { ResponseBaseDTO } from 'state/shared/responseBaseDTO';
 import { IdPropStrict } from 'utils/idProp';
 
 export interface User extends IdPropStrict {
@@ -11,6 +12,6 @@ export interface UserState extends BaseState {
     user: User
 }
 
-export interface ThunkUserResult {
+export interface GetUserResponseDTO extends ResponseBaseDTO {
     user: User
 }

@@ -1,8 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Channel, ChannelState } from "./types"
+import { Channel, ChannelState, ChannelType } from "./types"
 import * as thunks from "./thunks"
 import { RequestStatus } from "state/shared/requestStatus";
 import { signOut } from "state/auth";
+import { createRoom } from "state/room"
+import { User } from "state/user";
 
 const initialState: ChannelState = {
     channels: [],
@@ -10,8 +12,8 @@ const initialState: ChannelState = {
     error: "",
     selectedChannelId: -1,
     isChannelsOpen: true,
-    connectChannelStatus: RequestStatus.Idle,
-    connectChannelError: ""
+    dialogChannelStatus: RequestStatus.Idle,
+    dialogChannelError: ""
 }
 
 const channelsSlice = createSlice({
@@ -31,17 +33,18 @@ const channelsSlice = createSlice({
         closeChannels(state) {
             state.isChannelsOpen = false;
         },
-        changeConnectChannelError(state, action: PayloadAction<string>) {
-            const error = action.payload;
-            state.connectChannelError = error;
-        },
-        changeConnectChannelStatus(state, action: PayloadAction<RequestStatus>) {
+        changeDialogChannelStatus(state, action: PayloadAction<RequestStatus>) {
             const status = action.payload;
-            state.connectChannelStatus = status;
+            state.dialogChannelStatus = status;
+        },
+        changeDialogChannelError(state, action: PayloadAction<string>) {
+            const error = action.payload;
+            state.dialogChannelError = error;
         },
         addChannel(state, action: PayloadAction<Channel>) {
             const channel = action.payload;
             state.channels.push(channel);
+            state.selectedChannelId = channel.id;
         }
     },
     extraReducers: (builder) => {
@@ -50,7 +53,7 @@ const channelsSlice = createSlice({
             state.error = "";
         })
         builder.addCase(thunks.getChannels.fulfilled, (state, action) => {
-            const channels = action.payload.channels;
+            const channels = action.payload;
             state.status = RequestStatus.Succeeded;
             state.error = "";
             state.channels = channels;
@@ -63,18 +66,27 @@ const channelsSlice = createSlice({
         })
 
         builder.addCase(thunks.connectChannel.pending, (state, action) => {
-            state.connectChannelStatus = RequestStatus.Requesting;
-            state.connectChannelError = "";
+            state.dialogChannelStatus = RequestStatus.Requesting;
+            state.dialogChannelError = "";
         })
         builder.addCase(thunks.connectChannel.fulfilled, (state, action) => {
-            const channel = action.payload.connectedChannel;
-            state.connectChannelStatus = RequestStatus.Succeeded;
-            state.connectChannelError = "";
-            state.channels.push(channel)
+            const channel = action.payload;
+            state.dialogChannelStatus = RequestStatus.Succeeded;
+            state.dialogChannelError = "";
+            state.channels.push(channel);
+            state.selectedChannelId = channel.id;
         })
         builder.addCase(thunks.connectChannel.rejected, (state, action) => {
-            state.connectChannelStatus = RequestStatus.Failed;
-            state.connectChannelError = action.payload as string;
+            state.dialogChannelStatus = RequestStatus.Failed;
+            state.dialogChannelError = action.payload as string;
+        })
+
+        builder.addCase(createRoom.fulfilled, (state, action) => {
+            const channel = action.payload;
+            state.dialogChannelStatus = RequestStatus.Succeeded;
+            state.dialogChannelError = "";
+            state.channels.push({...channel, type: ChannelType.Room})
+            state.selectedChannelId = channel.id;
         })
 
         builder.addCase(signOut.pending, () => {
@@ -88,8 +100,8 @@ export const {
     toggleIsChannelsOpen, 
     openChannels, 
     closeChannels, 
-    changeConnectChannelError,
-    changeConnectChannelStatus,
+    changeDialogChannelStatus,
+    changeDialogChannelError,
     addChannel
 } = channelsSlice.actions;
 export default channelsSlice.reducer;

@@ -5,9 +5,9 @@ export const selectChannelId = (state: RootState) =>
   state.channels.selectedChannelId;
 export const selectFetchStatus = (state: RootState) =>  state.channels.status; 
 export const selectError = (state: RootState) => state.channels.error;
-export const selectConnectChannelStatus = (state: RootState) => 
- state.channels.connectChannelStatus;
-export const selectConnectChannelError = (state: RootState) => 
- state.channels.connectChannelError;
+export const selectDialogChannelStatus = (state: RootState) => 
+ state.channels.dialogChannelStatus;
+export const selectDialogChannelError = (state: RootState) => 
+ state.channels.dialogChannelError;
 export const selectIsChannelsOpen = (state: RootState) => 
   state.channels.isChannelsOpen;

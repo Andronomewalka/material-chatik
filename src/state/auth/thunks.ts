@@ -5,7 +5,6 @@ import {
   AuthRequestDTO, 
   SignInResponseDTO, 
   SignUpResponseDTO, 
-  ThunkSignInResult, 
   ThunkSignUpResult 
 } from "./types";
 import apiClient, { attachTokenToRequest } from "utils/apiClient";
@@ -15,7 +14,7 @@ import { ResponseError } from "utils/ResponseError";
 import { hub } from "utils/chatikHub";
 import { sendMessage } from "utils/reMess";
 
-export const signIn = createAsyncThunk<ThunkSignInResult, AuthRequest>
+export const signIn = createAsyncThunk<string, AuthRequest>
 ("auth/signIn", async (authRequest, { rejectWithValue }) => {
   try {
 
@@ -42,13 +41,13 @@ export const signIn = createAsyncThunk<ThunkSignInResult, AuthRequest>
 
     await hub.start();
     sendMessage('HubConnectionStateChanged', hub.state);
-    return { email: authRequest.email }
+    return authRequest.email;
   } catch (err: any) {
     return rejectWithValue(err?.message ?? "signing in fucked up");
   }
 });
 
-export const refreshTokenSignIn = createAsyncThunk<ThunkSignInResult>
+export const refreshTokenSignIn = createAsyncThunk<string>
 ("auth/refreshTokenSignIn", async (_, { rejectWithValue }) => {
   try {
     const response: AxiosResponse<SignUpResponseDTO> = 
@@ -64,7 +63,7 @@ export const refreshTokenSignIn = createAsyncThunk<ThunkSignInResult>
     
     await hub.start();
     sendMessage('HubConnectionStateChanged', hub.state);
-    return { email }
+    return email;
   } catch (err: any) {
     if (err instanceof ResponseError && err.code !== 9001) // refresh expired
         return rejectWithValue(err.message ?? "signing in through refresh fucked up");
@@ -114,7 +113,7 @@ export const signUp = createAsyncThunk<ThunkSignUpResult, AuthRequest>
 });
 
 
-export const signOut = createAsyncThunk<ThunkSignInResult>
+export const signOut = createAsyncThunk<string>
 ("auth/signOut", async (_, { rejectWithValue }) => {
   try {
     await apiClient.post("/auth/sign-out", { }, {
@@ -124,7 +123,7 @@ export const signOut = createAsyncThunk<ThunkSignInResult>
     await hub.stop();
     sendMessage('HubConnectionStateChanged', hub.state);
     attachTokenToRequest("");
-    return { email: "" }
+    return "";
   } catch (err: any) {
     return rejectWithValue(err?.message ?? "signing out fucked up");
   }

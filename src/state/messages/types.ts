@@ -11,8 +11,9 @@ export enum MessageType {
 export interface Message extends IdPropStrict {
     user: User,
     receiverId: number,
-    type: MessageType,
+    type?: MessageType,
     dateUtc: string,
+    timeUtc: string,
     text: string
 }
 
@@ -31,12 +32,4 @@ export interface SendMessageResponseDTO extends ResponseBaseDTO {
 export interface SendMessageRequestDTO {
     channelId: number,
     message: string
-}
-
-export interface ThunkGetMessagesResult {
-    messages: Message[]
-}
-
-export interface ThunkSendMessageResult {
-    message: Message
 }

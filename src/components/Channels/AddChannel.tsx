@@ -1,37 +1,36 @@
-import React, { SyntheticEvent, useState, useEffect, useCallback } from "react";
+import React, { SyntheticEvent, useState, useEffect } from "react";
 import {
   Box,
   Button,
   CircularProgress,
   Dialog,
   IconButton,
-  LinearProgress,
   TextField,
   Typography,
 } from "@mui/material";
 import { Add, Close } from "@mui/icons-material";
-import { Formik, Field, FormikHelpers, FormikProps } from "formik";
+import { Formik, Field, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { useAppDispatch } from "hooks/useAppDispatch";
-import {
-  changeConnectChannelError,
-  changeConnectChannelStatus,
-  connectChannel,
-  selectConnectChannelError,
-  selectConnectChannelStatus,
-} from "state/channels";
 import { useAppSelector } from "hooks/useAppSelector";
 import { RequestStatus } from "state/shared/requestStatus";
+import {
+  changeDialogChannelStatus,
+  changeDialogChannelError,
+  connectChannel,
+  selectDialogChannelStatus,
+  selectDialogChannelError,
+} from "state/channels";
 
 const AddChannel: React.FC = () => {
   const dispatch = useAppDispatch();
-  const status = useAppSelector(selectConnectChannelStatus);
-  const error = useAppSelector(selectConnectChannelError);
+  const status = useAppSelector(selectDialogChannelStatus);
+  const error = useAppSelector(selectDialogChannelError);
   const [isOpen, setIsOpen] = useState(false);
 
   const onOpen = (e: any) => {
-    dispatch(changeConnectChannelStatus(RequestStatus.Idle));
-    dispatch(changeConnectChannelError(""));
+    dispatch(changeDialogChannelStatus(RequestStatus.Idle));
+    dispatch(changeDialogChannelError(""));
     setIsOpen(true);
   };
 
@@ -83,7 +82,7 @@ const AddChannel: React.FC = () => {
           validationSchema={validationSchema}
           onSubmit={onSubmit}
         >
-          {({ errors, touched, setFieldValue, submitForm, isSubmitting }) => (
+          {({ errors, touched, submitForm, isSubmitting }) => (
             <Box
               component="form"
               onSubmit={(e: SyntheticEvent) => {

@@ -26,11 +26,8 @@ export interface SignUpResponseDTO extends SignInResponseDTO {
     serverValidationError?: string
 }
 
-export interface ThunkSignInResult {
-    email: string,
-}
-
-export interface ThunkSignUpResult extends ThunkSignInResult {
+export interface ThunkSignUpResult {
     success: boolean,
+    email: string,
     serverValidationError?: string
 }
