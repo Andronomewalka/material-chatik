@@ -8,7 +8,7 @@ import apiClient from "utils/apiClient";
 import { ResponseError } from "utils/ResponseError";
 
 export const getMessages = createAsyncThunk<Message[], number>
-("messages/getMessages", async (channelId, { rejectWithValue }) => {
+("messages/getMessages", async (channelId, { dispatch, rejectWithValue }) => {
   try {
     
     const response: AxiosResponse<GetMessagesResponseDTO> = 

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Box } from "@mui/system";
 import { useAppDispatch } from "hooks/useAppDispatch";
 import { useAppSelector } from "hooks/useAppSelector";
-import { selectChannelId } from "state/channels";
+import { changeTopChannel, selectChannelId } from "state/channels";
 import { getMessages, selectMessages } from "state/messages";
 import ChatInput from "components/Chat/ChatInput";
 import ChatHistory from "components//Chat/ChatHistory";
@@ -22,6 +22,7 @@ const Chat: React.FC = () => {
       channelId: selectedChannelId,
       message: text,
     });
+    dispatch(changeTopChannel(selectedChannelId));
   };
 
   useEffect(() => {

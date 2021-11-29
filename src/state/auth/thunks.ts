@@ -12,7 +12,6 @@ import { AxiosResponse } from "axios";
 import { parseJwt } from "utils/parseJwt";
 import { ResponseError } from "utils/ResponseError";
 import { hub } from "utils/chatikHub";
-import { sendMessage } from "utils/reMess";
 
 export const signIn = createAsyncThunk<string, AuthRequest>
 ("auth/signIn", async (authRequest, { rejectWithValue }) => {
@@ -40,7 +39,6 @@ export const signIn = createAsyncThunk<string, AuthRequest>
     }
 
     await hub.start();
-    sendMessage('HubConnectionStateChanged', hub.state);
     return authRequest.email;
   } catch (err: any) {
     return rejectWithValue(err?.message ?? "signing in fucked up");
@@ -60,9 +58,7 @@ export const refreshTokenSignIn = createAsyncThunk<string>
       throw new ResponseError(response.data.code, response.data.error);
     
     const email = parseJwt(response.data.accessToken)['email']
-    
     await hub.start();
-    sendMessage('HubConnectionStateChanged', hub.state);
     return email;
   } catch (err: any) {
     if (err instanceof ResponseError && err.code !== 9001) // refresh expired
@@ -101,7 +97,6 @@ export const signUp = createAsyncThunk<ThunkSignUpResult, AuthRequest>
     }
 
     await hub.start();
-    sendMessage('HubConnectionStateChanged', hub.state);
     return { 
       success: !response.data.serverValidationError,
       email: authRequest.email,
@@ -121,7 +116,6 @@ export const signOut = createAsyncThunk<string>
         });  
 
     await hub.stop();
-    sendMessage('HubConnectionStateChanged', hub.state);
     attachTokenToRequest("");
     return "";
   } catch (err: any) {

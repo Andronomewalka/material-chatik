@@ -45,6 +45,13 @@ const channelsSlice = createSlice({
             const channel = action.payload;
             state.channels.push(channel);
             state.selectedChannelId = channel.id;
+        },
+        changeTopChannel(state, action: PayloadAction<number>) {
+            const topChannelId = action.payload;
+            const topChannel = state.channels.find(cur => cur.id === topChannelId);
+            if (topChannel) {
+                state.channels = [topChannel, ...state.channels.filter((cur) => cur.id !== topChannelId)]
+            }
         }
     },
     extraReducers: (builder) => {
@@ -102,6 +109,7 @@ export const {
     closeChannels, 
     changeDialogChannelStatus,
     changeDialogChannelError,
-    addChannel
+    addChannel,
+    changeTopChannel
 } = channelsSlice.actions;
 export default channelsSlice.reducer;
